@@ -1,6 +1,5 @@
 const fp = require('lodash/fp');
-
-const { ENTITY_DISPLAY_TYPES } = require('./constants');
+const NodeCache = require('node-cache');
 
 const { splitOutIgnoredIps } = require('./dataTransformations');
 const createLookupResults = require('./createLookupResults');
@@ -16,9 +15,8 @@ const getLookupResults = async (entities, options, requestWithDefaults, Logger) 
   );
 
   const lookupResults = createLookupResults(
-    options,
-    entitiesPartition,
     foundEntities,
+    options,
     Logger
   );
 
@@ -33,19 +31,27 @@ const _getFoundEntities = async (
   options,
   requestWithDefaults,
   Logger
-) => {
-  const foundEntities = fp.getOr(
-    [],
-    'body.data',
-    await requestWithDefaults({
-      //TODO
-    })
-  );
+) =>
+  Promise.all(
+    fp.map(async (entity) => {
+      if (entity.isSHA256) return { entity, isSha256: true };
 
-  return fp.map((foundEntity) => {
-    //TODO
-  }, foundEntities);
-};
+      return {
+        entity,
+        endpoints: fp.get(
+          'body.items',
+          await requestWithDefaults({
+            method: 'GET',
+            url: `${options.dataRegionUrl}/endpoint/v1/endpoints`,
+            qs: {
+              search: entity.value
+            },
+            options
+          })
+        )
+      };
+    }, entitiesPartition)
+  );
 
 
 module.exports = {
