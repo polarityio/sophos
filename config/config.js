@@ -79,7 +79,8 @@ module.exports = {
       key: 'checkBlockAllowLists',
       name: 'Check SHA256 Hashes in Block and Allow Lists',
       description:
-        'If unchecked we will not check to see if a SHA256 hash is already in an Allow/Block list, to reduce the amount of API calls and lessen the amount you hit your API Limit.',
+        'If unchecked we will not check to see if a SHA256 hash is already in an Allow/Block list. ' +
+        'This reduces the amount of API calls and lessens your chances of hitting your API Limit.',
       default: true,
       type: 'boolean',
       userCanEdit: true,
@@ -90,10 +91,21 @@ module.exports = {
       name: 'Allow and Block List Cache Time',
       description:
         'If a SHA256 hash is submitted to an Allow or Block List outside of this integration, ' +
-        'this is the amount of time it will take before we register that update in our search. '+
+        'this is the amount of time it will take before we register that update in our search. ' +
         '(Unit is in Minutes)',
       default: 5,
       type: 'number',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'checkIsolationStatus',
+      name: 'Check Isolation Status',
+      description:
+        'If unchecked we will not check to see if an Endpoint is already Isolated unless you attempt to Isolate an Endpoint. ' +
+        'This reduces the amount of API calls and lessens your chances of hitting your API Limit.',
+      default: true,
+      type: 'boolean',
       userCanEdit: true,
       adminOnly: false
     }

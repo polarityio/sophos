@@ -54,7 +54,7 @@ const handleError = (error) =>
   )(error);
 
 const checkForInternalServiceError = (statusCode, response) => {
-  const error = JSON.stringify((fp.get('data.0.error', response)));
+  const error = fp.get('error', response);
   if (error) {
     const internalServiceError = Error(error);
     internalServiceError.status = 'internalServiceError';

@@ -101,7 +101,7 @@ const createRequestWithDefaults = (Logger) => {
     }
   };
 
-  
+  //TODO: Add auto pagination later
   const requestDefaultsWithInterceptors = requestWithDefaults(handleAuth);
 
   return requestDefaultsWithInterceptors;

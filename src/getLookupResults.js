@@ -32,6 +32,7 @@ const _getFoundEntities = async (
   requestWithDefaults,
   Logger
 ) =>
+//TODO: add throttling later
   Promise.all(
     fp.map(async (entity) => {
       if (entity.isSHA256) return { entity, isSha256: true };
