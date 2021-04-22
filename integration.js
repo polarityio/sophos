@@ -7,6 +7,7 @@ const createRequestWithDefaults = require('./src/createRequestWithDefaults');
 const isolateEndpoint = require('./src/isolateEndpoint');
 const addToBlockOrAllowList = require('./src/addToBlockOrAllowList');
 const checkAllowAndBlockListsForEntity = require('./src/checkAllowAndBlockListsForEntity');
+const getEndpointsIsolation = require('./src/getEndpointsIsolation');
 
 const { handleError } = require('./src/handleError');
 const { getLookupResults } = require('./src/getLookupResults');
@@ -39,18 +40,22 @@ const doLookup = async (entities, options, cb) => {
   cb(null, lookupResults);
 };
 
-const onDetails = async (lookupObject, options, cb) => {
+const onDetails = async (lookupObject, options, callback) => {
   Logger.debug({ lookupObject }, 'Lookup Object in onDetails');
 
-  const isSHA256Hash = fp.flow(fp.get('entity.type'), fp.equals('SHA256'))(lookupObject)
+  const isSHA256Hash = fp.flow(
+    fp.get('entity.subtype'),
+    fp.equals('SHA256')
+  )(lookupObject);
   if (isSHA256Hash && options.checkBlockAllowLists) {
     try {
-      lookupObject.data.details = await checkAllowAndBlockListsForEntity(
+      lookupObject.data = await checkAllowAndBlockListsForEntity(
         lookupObject,
         options,
         requestWithDefaults,
         Logger
       );
+      Logger.trace({ test: 111111111, asdf: lookupObject.data.details });
     } catch (error) {
       Logger.error(error, 'Error with SHA256 in onDetails');
       callback(error, lookupObject.data);
@@ -60,27 +65,31 @@ const onDetails = async (lookupObject, options, cb) => {
   const endpoints = fp.get('data.details.endpoints', lookupObject);
   if (!isSHA256Hash && fp.size(endpoints) && options.checkIsolationStatus) {
     try {
-      lookupObject.data.details.endpoints = await Promise.all(
-        fp.map(async (endpoint) => {
-          const isIsolated = fp.get(
-            'body.enabled',
-            await requestWithDefaults({
-              method: 'GET',
-              url: `${options.dataRegionUrl}/endpoint/v1/endpoints/${endpoint.id}/isolation`,
-              options
-            })
-          );
-
-          return { ...endpoint, isIsolated };
-        })
+      lookupObject.data.details.endpoints = await getEndpointsIsolation(
+        lookupObject,
+        options,
+        requestWithDefaults,
+        Logger
       );
+      
+      const anyEndpointsAreIsolated = fp.flow(
+        fp.get('data.details.endpoints'),
+        fp.some(fp.get('isIsolated'))
+      )(lookupObject);
+        
+      if (anyEndpointsAreIsolated) {
+        lookupObject.data.summary = [
+          ...fp.get('data.summary', lookupObject),
+          'Isolated Endpoint Found'
+        ];
+      }
     } catch (error) {
       Logger.error(error, 'Error Checking Isolation Status in onDetails');
       callback(error, lookupObject.data);
     }
   }
 
-  cb(null, lookupObject.data);
+  callback(null, lookupObject.data);
 };
 
 const getOnMessage = {

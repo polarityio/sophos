@@ -92,6 +92,7 @@ module.exports = {
       description:
         'If a SHA256 hash is submitted to an Allow or Block List outside of this integration, ' +
         'this is the amount of time it will take before we register that update in our search. ' +
+        'The longer this time, the less calls to the API are needed, lessening your chances of hitting your API Limit.' +
         '(Unit is in Minutes)',
       default: 5,
       type: 'number',

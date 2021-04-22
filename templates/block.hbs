@@ -1,0 +1,172 @@
+{{#if (not (eq block.entity.type "SHA256"))}}
+  {{#each details.endpoints as |endpoint endpointIndex|}}
+    {{#if (gt endpointIndex 0)}}
+      <hr>
+    {{/if}}
+
+    <h1 class="p-title">
+      {{fa-icon "info-circle" fixedWidth=true class="title-icon"}} {{endpoint.hostname}}
+    </h1>
+    <div>
+      <a href="https://central.sophos.com/manage/overview/computers-list">
+        View In Dashboard {{fa-icon "external-link" fixedWidth=true class="external-link-icon"}}
+      </a>
+    </div>
+
+    {{#if endpoint.isIsolated}}
+      <div>
+        <span class="p-key">Isolated: </span>
+        <span class="p-value">True</span>
+      </div>
+    {{/if}}
+    {{#if endpoint.os}}
+      {{#if endpoint.os.name}}
+        <div>
+          <span class="p-key">OS Name: </span>
+          <span class="p-value">{{endpoint.os.name}}</span>
+        </div>
+      {{/if}}
+      {{#if endpoint.os.isServer}}
+        <div>
+          <span class="p-key">Is Server: </span>
+          <span class="p-value">{{endpoint.os.isServer}}</span>
+        </div>
+      {{/if}}
+    {{/if}}
+    {{#if endpoint.associatedPerson.name}}
+      <div>
+        <span class="p-key">Associated Person: </span>
+        <span class="p-value">{{endpoint.associatedPerson.name}}</span>
+      </div>
+    {{/if}}
+    {{#if endpoint.ipv4Addresses}}
+      <div>
+        <span class="p-key">IP Addresses: </span>
+        <span class="p-value">
+          {{#each endpoint.ipv4Addresses as |ipAddress ipIndex|}}
+            {{ipAddress}}{{#if (not (eq ipIndex (sub endpoint.ipv4Addresses.length 1)))}}, {{/if}}
+          {{/each}}
+        </span>
+      </div>
+    {{/if}}
+    {{#if endpoint.macAddresses}}
+      <div>
+        <span class="p-key">MAC Addresses: </span>
+        <span class="p-value">
+          {{#each endpoint.macAddresses as |macAddress macIndex|}}
+            {{macAddress}}{{#if (not (eq macIndex (sub endpoint.macAddresses.length 1)))}}, {{/if}}
+          {{/each}}
+        </span>
+      </div>
+    {{/if}}
+
+    {{#if endpoint.lastSeenAt}}
+      <div>
+        <span class="p-key">Last Seen At: </span>
+        <span class="p-value">{{moment-format endpoint.lastSeenAt "MM/DD/YYYY HH:mm:ss" timeZone=timezone}}</span>
+      </div>
+    {{/if}}
+
+    {{#if endpoint.health}}
+      <h1 class="p-title">
+        {{fa-icon "plus-square" fixedWidth=true class="title-icon"}} Endpoint Health
+      </h1>
+      {{#if endpoint.health.overall}}
+        <div>
+          <span class="p-key">Overall Health: </span>
+          <span class="p-value">{{capitalize endpoint.health.overall}}</span>
+        </div>
+      {{/if}}
+      {{#if endpoint.health.threats.status}}
+        <div>
+          <span class="p-key">Threats Status: </span>
+          <span class="p-value">{{capitalize endpoint.health.threats.status}}</span>
+        </div>
+      {{/if}}
+      {{#if endpoint.health.services}}
+        {{#if endpoint.health.services.status}}
+          <div>
+            <span class="p-key">Services Status: </span>
+            <span class="p-value">{{capitalize endpoint.health.services.status}}</span>
+          </div>
+        {{/if}}
+        {{#if endpoint.health.services.serviceDetails.length}}
+          {{#if (get endpointServiceDetailsExpansionMap endpointIndex)}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleServiceDetails" endpointIndex)}}
+            >
+              <span class="text">Service Details</span> {{fa-icon "angle-up"}}
+            </a>
+            {{#each endpoint.health.services.serviceDetails as |serviceDetail|}}
+              <div>
+                <span class="p-key">{{serviceDetail.name}}: </span>
+                <span class="p-value">{{capitalize serviceDetail.status}}</span>
+              </div>
+            {{/each}}
+          {{else}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleServiceDetails" endpointIndex)}}
+            >
+              <span class="text">Service Details</span> {{fa-icon "angle-down"}}
+            </a>
+          {{/if}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+
+    {{#if endpoint.assignedProducts.length}}
+      <h1 class="p-title">
+        {{fa-icon "project-diagram" fixedWidth=true class="title-icon"}} Assigned Products
+      </h1>
+      {{#each endpoint.assignedProducts as |assignedProduct|}}
+        <div>
+          <span class="p-key">{{capitalize assignedProduct.code}}({{assignedProduct.version}}): </span>
+          <span class="p-value">{{capitalize assignedProduct.status}}</span>
+        </div>
+      {{/each}}
+    {{/if}}
+
+    <h1 class="p-title submission-options py-1">
+      {{fa-icon "pause-circle" fixedWidth=true class="title-icon"}} Isolate Endpoint
+    </h1>
+    <div class="select-container">
+      <span class="p-value">Isolation Comment: &nbsp;</span>
+      <input
+        type="text"
+        class="comment"
+        placeholder="Why isolate?"
+        onInput={{action "changeIsolationComment" endpointIndex}}
+        value={{endpoint.isolationComment}}
+        disabled={{isolateIsRunning}}
+      />
+    </div>
+
+    <div class="d-flex flex-row justify-content-between align-items-center mt-2">
+      <button {{action "isolateEndpoint" endpointIndex}}
+              disabled={{isolateIsRunning}}
+              class="p-btn btn btn-secondary m-0">
+        {{#if isolateIsRunning}}
+          {{fa-icon "spinner-third" fixedWidth=true spin=true}}
+        {{else}}
+          Isolate Endpoint
+        {{/if}}
+      </button>
+
+      {{#if isolateMessage}}
+        <div class="isolate-message alert alert-info m-0">
+          {{isolateMessage}}
+        </div>
+      {{/if}}
+
+      {{#if isolateErrorMessage}}
+        <div class="isolate-message alert alert-danger m-0">
+          {{isolateErrorMessage}}
+        </div>
+      {{/if}}
+    </div>
+  {{/each}}
+{{/if}}

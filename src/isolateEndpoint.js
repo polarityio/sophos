@@ -1,5 +1,5 @@
 const isolateEndpoint = async (
-  { endpoint, comment },
+  { endpoint },
   options,
   requestWithDefaults,
   callback,
@@ -8,42 +8,36 @@ const isolateEndpoint = async (
   try {
     const isolationUrl = `${options.dataRegionUrl}/endpoint/v1/endpoints/${endpoint.id}/isolation`;
     
-    const isolatedEndpoint = { ...endpoint, isIsolated: true };
-
     if (!options.checkIsolationStatus) {
       const isIsolated = fp.get(
         'body.enabled',
         await requestWithDefaults({ method: 'GET', url: isolationUrl, options })
       );
 
-      if (isIsolated)
-        return callback(null, {
-          isolatedEndpoint,
-          message: 'Endpoint is Already Isolated!'
-        });
+      if (isIsolated) return callback(null, { message: 'Endpoint is Already Isolated!' });
     }
 
     await requestWithDefaults({
       method: 'PATCH',
       url: isolationUrl,
-      body: {
+      body: JSON.stringify({
         enabled: true,
-        comment
-      },
+        comment: endpoint.isolationComment
+      }),
       options
     });
 
-    return callback(null, {
-      isolatedEndpoint,
-      message: 'Endpoint Isolation Successful.'
-    });
+    return callback(null, { message: 'Endpoint Isolation Successful.' });
   } catch (error) {
     Logger.error(error, 'Error Isolating Endpoint');
     return callback({
       errors: [
         {
           err: error,
-          detail: error.message
+          detail:
+            error.message === 'BadRequest'
+              ? 'This Endpoint is either already Isolated or Currently being Removed From Isolation.'
+              : error.message
         }
       ]
     });

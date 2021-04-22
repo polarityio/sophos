@@ -26,7 +26,7 @@ const checkAllowAndBlockListsForEntity = async (
       })
     );
 
-    if (blockList.length) {
+    if (fp.size(blockList)) {
       allowAndBlockListsCache.set(
         'blockList',
         blockList,
@@ -50,7 +50,7 @@ const checkAllowAndBlockListsForEntity = async (
       })
     );
 
-    if (allowList.length) {
+    if (fp.size(allowList)) {
       allowAndBlockListsCache.set(
         'allowList',
         allowList,
@@ -70,10 +70,16 @@ const checkAllowAndBlockListsForEntity = async (
   );
 
   return {
-    ...lookupObject.data.details,
-    foundSha256: entityFoundInBlockList || entityFoundInAllowList,
-    blocked: !!entityFoundInBlockList,
-    allowed: !!entityFoundInAllowList
+    summary: [].concat(
+      entityFoundInBlockList ? ['In Blocklist'] : [],
+      entityFoundInAllowList ? ['In Allowlist'] : []
+    ),
+    details: {
+      ...lookupObject.data.details,
+      foundSha256: entityFoundInBlockList || entityFoundInAllowList,
+      blocked: !!entityFoundInBlockList,
+      allowed: !!entityFoundInAllowList
+    }
   };
 };
 

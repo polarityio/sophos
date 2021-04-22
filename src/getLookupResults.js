@@ -1,5 +1,4 @@
 const fp = require('lodash/fp');
-const NodeCache = require('node-cache');
 
 const { splitOutIgnoredIps } = require('./dataTransformations');
 const createLookupResults = require('./createLookupResults');
@@ -32,7 +31,6 @@ const _getFoundEntities = async (
   requestWithDefaults,
   Logger
 ) =>
-//TODO: add throttling later
   Promise.all(
     fp.map(async (entity) => {
       if (entity.isSHA256) return { entity, isSha256: true };
