@@ -23,9 +23,27 @@ module.exports = {
     rejectUnauthorized: true
   },
   logging: {
-    level: 'trace' //trace, debug, info, warn, error, fatal
+    level: 'info' //trace, debug, info, warn, error, fatal
   },
   options: [
+    {
+      key: 'dataRegionUrl',
+      name: 'Data Region Url',
+      description: 'The Data Region Url for your Tenant ID.',
+      default: '',
+      type: 'text',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'tenantId',
+      name: 'Tenant ID',
+      description: 'The Tenant ID you wish to use in searching.',
+      default: '',
+      type: 'text',
+      userCanEdit: true,
+      adminOnly: false
+    },
     {
       key: 'clientId',
       name: 'Client ID',
@@ -46,30 +64,21 @@ module.exports = {
       adminOnly: false
     },
     {
-      key: 'tenantId',
-      name: 'Tenant ID',
-      description:
-        'The Tenant ID you wish to use in searching. (Can be found by running "node getTenantIdAndDataRegion clientId=<your-client-id> clientSecret=<your-client-secret>") in your terminal',
-      default: '',
-      type: 'text',
-      userCanEdit: true,
-      adminOnly: false
-    },
-    {
-      key: 'dataRegionUrl',
-      name: 'Data Region Url',
-      description:
-        'The Data Region Url for your Tenant ID. (Can be found by running "node getTenantIdAndDataRegion clientId=<your-client-id> clientSecret=<your-client-secret>" in your terminal)',
-      default: '',
-      type: 'text',
-      userCanEdit: true,
-      adminOnly: false
-    },
-    {
       key: 'allowBlockAllowIsolate',
       name: 'Allow Block Listing, Allow Listing, and Endpoint Isolation',
       description:
         'This allows you to add SHA256 hashes to Allow and Block lists, and Isolate found endpoints.',
+      default: true,
+      type: 'boolean',
+      userCanEdit: true,
+      adminOnly: false
+    },
+    {
+      key: 'checkIsolationStatus',
+      name: 'Check Isolation Status',
+      description:
+        'If unchecked we will not check to see if an Endpoint is already Isolated unless you attempt to Isolate an Endpoint. ' +
+        'This reduces the amount of API calls and lessens your chances of hitting your API Limit.',
       default: true,
       type: 'boolean',
       userCanEdit: true,
@@ -92,21 +101,10 @@ module.exports = {
       description:
         'If a SHA256 hash is submitted to an Allow or Block List outside of this integration, ' +
         'this is the amount of time it will take before we register that update in our search. ' +
-        'The longer this time, the less calls to the API are needed, lessening your chances of hitting your API Limit.' +
+        'The longer this time, the less calls to the API are needed, lessening your chances of hitting your API Limit. ' +
         '(Unit is in Minutes)',
       default: 5,
       type: 'number',
-      userCanEdit: true,
-      adminOnly: false
-    },
-    {
-      key: 'checkIsolationStatus',
-      name: 'Check Isolation Status',
-      description:
-        'If unchecked we will not check to see if an Endpoint is already Isolated unless you attempt to Isolate an Endpoint. ' +
-        'This reduces the amount of API calls and lessens your chances of hitting your API Limit.',
-      default: true,
-      type: 'boolean',
       userCanEdit: true,
       adminOnly: false
     }
