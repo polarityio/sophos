@@ -55,7 +55,6 @@ const onDetails = async (lookupObject, options, callback) => {
         requestWithDefaults,
         Logger
       );
-      Logger.trace({ test: 111111111, asdf: lookupObject.data.details });
     } catch (error) {
       Logger.error(error, 'Error with SHA256 in onDetails');
       callback(error, lookupObject.data);

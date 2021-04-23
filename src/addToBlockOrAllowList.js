@@ -18,20 +18,26 @@ const addToBlockOrAllowList = async (
       });
     }
 
-    await requestWithDefaults({
-      method: 'POST',
-      url: `${listBaseUrl}/${shouldBlockEntity ? 'blocked' : 'allowed'}-items`,
-      body: {
-        type: 'sha256',
-        properties: {
-          sha256: entity.value
+    const _foundSha256 = fp.get(
+      'body',
+      await requestWithDefaults({
+        method: 'POST',
+        url: `${listBaseUrl}/${shouldBlockEntity ? 'blocked' : 'allowed'}-items`,
+        body: {
+          type: 'sha256',
+          properties: {
+            sha256: entity.value
+          },
+          comment
         },
-        comment
-      },
-      options
-    });
+        options
+      })
+    );
 
-    return callback(null, { message: 'Added to List Successfully' });
+    return callback(null, {
+      message: 'Added to List Successfully',
+      foundSha256: _foundSha256
+    });
   } catch (error) {
     Logger.error(error, 'Error Adding Entity to Allow or Block List');
     return callback({

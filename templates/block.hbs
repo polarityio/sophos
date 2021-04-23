@@ -1,4 +1,4 @@
-{{#if (not (eq block.entity.type "SHA256"))}}
+{{#if (not details.isSha256)}}
   {{#each details.endpoints as |endpoint endpointIndex|}}
     {{#if (gt endpointIndex 0)}}
       <hr>
@@ -156,17 +156,171 @@
         {{/if}}
       </button>
 
-      {{#if isolateMessage}}
+      {{#if message}}
         <div class="isolate-message alert alert-info m-0">
-          {{isolateMessage}}
+          {{message}}
         </div>
       {{/if}}
 
-      {{#if isolateErrorMessage}}
+      {{#if errorMessage}}
         <div class="isolate-message alert alert-danger m-0">
-          {{isolateErrorMessage}}
+          {{errorMessage}}
         </div>
       {{/if}}
     </div>
   {{/each}}
+{{else}}
+  {{#if details.foundSha256}}
+    <div>
+      <span class="p-key">In {{#if details.blocked}}Blocklist{{else}}AllowList{{/if}}: </span>
+      <span class="p-value">True</span>
+    </div>
+    <div>
+      <span class="p-key">Type: </span>
+      <span class="p-value">SHA256</span>
+    </div>
+    
+    {{#if details.foundSha256.createdAt}}
+      <div>
+        <span class="p-key">Date Added: </span>
+        <span class="p-value">{{moment-format details.foundSha256.createdAt "DD-MM-YYY HH:mm:ss z" timeZone=timezone}}</span>
+      </div>
+    {{/if}}
+    {{#if details.foundSha256.comment}}
+      <div>
+        <span class="p-key">Comment: </span>
+        <span class="p-value">{{details.foundSha256.comment}}</span>
+      </div>
+    {{/if}}
+  {{/if}}
+  
+  <ul class="nav nav-tabs">
+    <li class="nav-item">
+      <a {{action "changeTab" "addToBlocklist"}} class="nav-link {{if (or (eq activeTab "addToBlocklist")(not activeTab)) "active"}}" href="#">
+        Add To Blocklist
+      </a>
+    </li>
+    <li class="nav-item">
+      <a {{action "changeTab" "addToAllow"}} class="nav-link {{if (eq activeTab "addToAllow") "active"}}" href="#">
+        Add To Allowlist
+      </a>
+    </li>
+  </ul>
+
+
+  {{#if (eq activeTab "addToBlocklist")}}
+    <div>
+      <a href="https://central.sophos.com/manage/config/settings/endpoint-blocklist">
+        View Blocked Items {{fa-icon "external-link" fixedWidth=true class="external-link-icon"}}
+      </a>
+    </div>
+
+    {{#if details.allowed}}
+      <div class="note">
+        <span class="p-key">
+          <b><em>NOTE: </em></b>This hash is already found in the Allowlist.
+          Blocking this hash will remove it from the Allowlist, and add it to the Blocklist.
+        </span>
+      </div>
+    {{/if}}
+    {{#if details.blocked}}
+      <div class="note">
+        <span class="p-key"><b><em>NOTE: </em></b>This hash is already in the blocklist.</span>
+      </div>
+    {{/if}}
+
+    <div class="select-container">
+      <span class="p-value">Blocking Comment: &nbsp;</span>
+      <input
+        type="text"
+        class="comment"
+        placeholder="Why Block this Hash?"
+        onInput={{action (mut blockingComment) value="target.value"}}
+        value={{blockingComment}}
+        disabled={{details.blocked}}
+      />
+    </div>
+
+    <div class="d-flex flex-row justify-content-between align-items-center mt-2">
+      <button {{action "addToBlockOrAllowList" true}}
+              disabled={{details.blocked}}
+              class="p-btn btn btn-secondary m-0">
+        {{#if isBlockingOrAllowing}}
+          {{fa-icon "spinner-third" fixedWidth=true spin=true}}
+        {{else}}
+          Block
+        {{/if}}
+      </button>
+
+      {{#if message}}
+        <div class="isolate-message alert alert-info m-0">
+          {{message}}
+        </div>
+      {{/if}}
+
+      {{#if errorMessage}}
+        <div class="isolate-message alert alert-danger m-0">
+          {{errorMessage}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+
+
+  {{#if (eq activeTab "addToAllow")}}
+    <div>
+      <a href="https://central.sophos.com/manage/config/settings/endpoint-blocklist">
+        View Allowed Applications {{fa-icon "external-link" fixedWidth=true class="external-link-icon"}}
+      </a>
+    </div>
+    {{#if details.blocked}}
+      <div class="note">
+        <span class="p-key">
+          <b><em>NOTE: </em></b>This hash is already found in the Blocklist.
+          Allowing this hash will remove it from the Blocklist, and add it to the Allowlist.
+        </span>
+      </div>
+    {{/if}}
+    {{#if details.allowed}}
+      <div class="note">
+        <span class="p-key"><b><em>NOTE: </em></b>This hash is already in the AllowList.</span>
+      </div>
+    {{/if}}
+
+    <div class="select-container">
+      <span class="p-value">Allowing Comment: &nbsp;</span>
+      <input
+        type="text"
+        class="comment"
+        placeholder="Why Allow this Hash?"
+        onInput={{action (mut allowingComment) value="target.value"}}
+        value={{allowingComment}}
+        disabled={{details.allowed}}
+      />
+    </div>
+
+    <div class="d-flex flex-row justify-content-between align-items-center mt-2">
+      <button {{action "addToBlockOrAllowList" false}}
+              disabled={{details.allowed}}
+              class="p-btn btn btn-secondary m-0">
+        {{#if isBlockingOrAllowing}}
+          {{fa-icon "spinner-third" fixedWidth=true spin=true}}
+        {{else}}
+          Allow
+        {{/if}}
+      </button>
+
+      {{#if message}}
+        <div class="isolate-message alert alert-info m-0">
+          {{message}}
+        </div>
+      {{/if}}
+
+      {{#if errorMessage}}
+        <div class="isolate-message alert alert-danger m-0">
+          {{errorMessage}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
 {{/if}}

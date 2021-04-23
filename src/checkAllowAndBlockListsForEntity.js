@@ -59,15 +59,17 @@ const checkAllowAndBlockListsForEntity = async (
     }
   }
 
-  const entityFoundInBlockList = fp.find(
-    (item) => fp.get('properties.sha256', item) === fp.get('entity.value', lookupObject),
-    blockList
-  );
+  const entityFoundInBlockList = fp.find((item) => {
+    const itemSha = fp.get('properties.sha256', item);
+    const entityValue = fp.get('entity.value', lookupObject);
+    return itemSha && entityValue && fp.toLower(itemSha) === fp.toLower(entityValue);
+  }, blockList);
 
-  const entityFoundInAllowList = fp.find(
-    (item) => fp.get('properties.sha256', item) === fp.get('entity.value', lookupObject),
-    allowList
-  );
+  const entityFoundInAllowList = fp.find((item) => {
+    const itemSha = fp.get('properties.sha256', item);
+    const entityValue = fp.get('entity.value', lookupObject);
+    return itemSha && entityValue && fp.toLower(itemSha) === fp.toLower(entityValue);
+  }, allowList);
 
   return {
     summary: [].concat(
