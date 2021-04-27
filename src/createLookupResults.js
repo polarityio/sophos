@@ -7,7 +7,7 @@ const createLookupResults = (foundEntities, options, Logger) =>
         {
           entity: foundEntity.entity,
           data: {
-            summary: [],
+            summary: ["Click to Search Allow/Block Lists"],
             details: {
               isSha256: true
             }

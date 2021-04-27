@@ -74,7 +74,8 @@ const checkAllowAndBlockListsForEntity = async (
   return {
     summary: [].concat(
       entityFoundInBlockList ? ['In Blocklist'] : [],
-      entityFoundInAllowList ? ['In Allowlist'] : []
+      entityFoundInAllowList ? ['In Allowlist'] : [],
+      !entityFoundInAllowList && !entityFoundInBlockList ? ['Not in Block/Allow Lists'] : []
     ),
     details: {
       ...lookupObject.data.details,

@@ -2,7 +2,13 @@ module.exports = {
   name: 'Sophos',
   acronym: 'SO',
   description: 'Polarity integration that connects to Sophos.',
-  entityTypes: ['domain', 'url', 'string', 'IPv4', 'IPv6', 'SHA256'],
+  entityTypes: ['domain', 'url', 'IPv4', 'IPv6', 'SHA256'],
+  customTypes: [
+    {
+      key: 'hostname',
+      regex: /\w{3,}\-\w{3,}/
+    }
+  ],
   styles: ['./styles/styles.less'],
   defaultColor: 'light-pink',
   onDemandOnly: true,
