@@ -8,9 +8,6 @@ polarity.export = PolarityComponent.extend({
   errorMessage: '',
   isolateIsRunning: false,
   endpointServiceDetailsExpansionMap: {},
-  init() {
-    this._super(...arguments);
-  },
   actions: {
     changeTab: function (tabName) {
       this.set('activeTab', tabName);
