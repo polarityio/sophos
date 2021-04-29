@@ -1,7 +1,8 @@
 module.exports = {
   name: 'Sophos',
   acronym: 'SO',
-  description: 'Polarity integration that connects to Sophos.',
+  description:
+    'The Polarity Sophos integration allows Polarity to search Sophos to return found domains, urls, IPs, and SHA256 hashes.  The integration also allows you to Isolated found endpoints, and add SHA256 hashes to your Block and Allow Lists.',
   entityTypes: ['domain', 'url', 'IPv4', 'IPv6', 'SHA256'],
   customTypes: [
     {
