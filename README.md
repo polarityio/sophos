@@ -1,6 +1,6 @@
-# Polarity ThreatQuotient Integration
+# Polarity Sophos Integration
 
-The Polarity ThreatQuotient integration allows Polarity to search your instance of ThreatQuotient to return found domains, IPs, hashes, and emails.  The integration also allows you to Create and Delete Indicators (IOCs) in bulk from ThreatQuotient.
+The Polarity Sophos integration allows Polarity to search Sophos to return found domains, urls, IPs, and SHA256 hashes.  The integration also allows you to Isolated found endpoints, and add SHA256 hashes to your Block and Allow Lists.
 
 
 
@@ -9,7 +9,7 @@ The Polarity ThreatQuotient integration allows Polarity to search your instance 
   <img width="400" alt="Integration Example SHA256 Results" src="./assets/integration-sha256.png">
 </div>
 
-## ThreatQuotient Integration Options
+## Sophos Integration Options
 
 ### Data Region Url
 The Data Region Url for your Tenant ID.
