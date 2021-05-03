@@ -132,7 +132,7 @@
         {{fa-icon "pause-circle" fixedWidth=true class="title-icon"}} Isolate Endpoint
       </h1>
       <div class="select-container">
-        <div class="p-value">Isolation Comment: &nbsp;</div>
+        <div class="p-value">Isolation Comment:</div>
         <textarea
           type="text"
           class="comment"
@@ -153,19 +153,18 @@
             Isolate Endpoint
           {{/if}}
         </button>
-
-        {{#if message}}
-          <div class="isolate-message alert alert-info m-0">
-            {{message}}
-          </div>
-        {{/if}}
-
-        {{#if errorMessage}}
-          <div class="isolate-message alert alert-danger m-0">
-            {{errorMessage}}
-          </div>
-        {{/if}}
       </div>
+      {{#if message}}
+        <div class="isolate-message alert alert-info mt-1">
+          {{message}}
+        </div>
+      {{/if}}
+
+      {{#if errorMessage}}
+        <div class="isolate-message alert alert-danger mt-1">
+          {{errorMessage}}
+        </div>
+      {{/if}}
     {{/if}}
   {{/each}}
 {{else}}
