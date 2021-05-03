@@ -3,15 +3,16 @@
     {{#if (gt endpointIndex 0)}}
       <hr>
     {{/if}}
+    
+    <div>
+      <a href="https://central.sophos.com/manage/overview/computers-list">
+        Open Dashboard {{fa-icon "external-link" fixedWidth=true class="external-link-icon"}}
+      </a>
+    </div>
 
     <h1 class="p-title">
       {{fa-icon "info-circle" fixedWidth=true class="title-icon"}} {{endpoint.hostname}}
     </h1>
-    <div>
-      <a href="https://central.sophos.com/manage/overview/computers-list">
-        View In Dashboard {{fa-icon "external-link" fixedWidth=true class="external-link-icon"}}
-      </a>
-    </div>
 
     {{#if endpoint.isIsolated}}
       <div>
@@ -135,8 +136,8 @@
         {{fa-icon "pause-circle" fixedWidth=true class="title-icon"}} Isolate Endpoint
       </h1>
       <div class="select-container">
-        <span class="p-value">Isolation Comment: &nbsp;</span>
-        <input
+        <div class="p-value">Isolation Comment: &nbsp;</div>
+        <textarea
           type="text"
           class="comment"
           placeholder="Why isolate?"
@@ -241,8 +242,8 @@
       {{/if}}
 
       <div class="select-container">
-        <span class="p-value">Blocking Comment: &nbsp;</span>
-        <input
+        <div class="p-value">Blocking Comment: &nbsp;</div>
+        <textarea
           type="text"
           class="comment"
           placeholder="Why Block this Hash?"
@@ -299,8 +300,8 @@
       {{/if}}
 
       <div class="select-container">
-        <span class="p-value">Allowing Comment: &nbsp;</span>
-        <input
+        <div class="p-value">Allowing Comment: &nbsp;</div>
+        <textarea
           type="text"
           class="comment"
           placeholder="Why Allow this Hash?"

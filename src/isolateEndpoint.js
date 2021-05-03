@@ -1,3 +1,5 @@
+const fp = require('lodash/fp');
+
 const isolateEndpoint = async (
   { endpoint },
   options,
@@ -7,7 +9,7 @@ const isolateEndpoint = async (
 ) => {
   try {
     const isolationUrl = `${options.dataRegionUrl}/endpoint/v1/endpoints/${endpoint.id}/isolation`;
-    
+
     if (!options.checkIsolationStatus) {
       const isIsolated = fp.get(
         'body.enabled',
