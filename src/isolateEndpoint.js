@@ -38,7 +38,7 @@ const isolateEndpoint = async (
           err: error,
           detail:
             error.message === 'BadRequest'
-              ? 'This Endpoint is either already Isolated or Currently being Removed From Isolation.'
+              ? 'This Endpoint is either already isolated or currently being removed From isolation.'
               : error.message
         }
       ]
