@@ -53,7 +53,10 @@ const createRequestWithDefaults = (Logger) => {
         const result = await _requestWithDefault(_requestOptions);
         checkForStatusError(result, _requestOptions);
 
-        postRequestFunctionResults = await postRequestSuccessFunction(result);
+        postRequestFunctionResults = await postRequestSuccessFunction(
+          result,
+          _requestOptions
+        );
       } catch (error) {
         postRequestFunctionResults = await postRequestFailureFunction(
           error,
@@ -69,11 +72,8 @@ const createRequestWithDefaults = (Logger) => {
     options,
     ...requestOptions
   }) => {
-    const token = await getAuthToken(
-      options,
-      requestDefaultsWithInterceptors
-    ).catch((error) => {
-      Logger.error({ error }, 'Unable to retrieve Auth Token');
+    const token = await getAuthToken(options, requestWithDefaults()).catch((error) => {
+      Logger.error(error, 'Unable to retrieve Auth Token');
       throw error;
     });
 
@@ -81,9 +81,11 @@ const createRequestWithDefaults = (Logger) => {
 
     return {
       ...requestOptions,
+      qs: { ...requestOptions.qs, pageTotal: true },
       headers: {
         ...requestOptions.headers,
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        'X-Tenant-ID': options.tenantId
       }
     };
   };
@@ -101,8 +103,40 @@ const createRequestWithDefaults = (Logger) => {
     }
   };
 
-  
-  const requestDefaultsWithInterceptors = requestWithDefaults(handleAuth);
+  const handlePagination = async (result, requestOptions) => {
+    const totalPages = fp.get('body.pages.total', result);
+    const currentPage = fp.get('body.pages.current', result);
+    
+    const shouldUseNormalPagination =
+      totalPages && currentPage && totalPages > currentPage;
+
+    const nextKey = fp.get('body.pages.nextKey', result);
+    const shouldUseKeyBasedPagination = !!nextKey;
+
+    if (shouldUseNormalPagination || shouldUseKeyBasedPagination) {
+      const nextPageResults = await requestDefaultsWithInterceptors({
+        ...requestOptions,
+        qs: {
+          ...requestOptions.qs,
+          ...(shouldUseKeyBasedPagination
+            ? { pageFromKey: nextKey }
+            : { page: currentPage + 1 })
+        }
+      });
+
+      return {
+        ...nextPageResults,
+        body: {
+          ...nextPageResults.body,
+          items: [...result.body.items, ...nextPageResults.body.items]
+        }
+      };
+    }
+    
+    return result
+  }
+
+  const requestDefaultsWithInterceptors = requestWithDefaults(handleAuth, handlePagination);
 
   return requestDefaultsWithInterceptors;
 };

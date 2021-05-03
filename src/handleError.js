@@ -15,6 +15,12 @@ const STATUS_CODE_ERROR_MESSAGE = {
       'Requested item doesn’t exist or not enough access permissions -> ' +
       `${error.description}`
   }),
+  429: (error) => ({
+    err: 'Too Many Requests',
+    detail:
+      'Exceeded API Request Limits within a certain timeframe -> ' +
+      `${error.description}`
+  }),
   500: (error) => ({
     err: 'Server Error',
     detail: 'Unexpected Server Error -> ' + `${error.description}`
@@ -48,7 +54,7 @@ const handleError = (error) =>
   )(error);
 
 const checkForInternalServiceError = (statusCode, response) => {
-  const error = JSON.stringify((fp.get('data.0.error', response)));
+  const error = fp.get('error', response);
   if (error) {
     const internalServiceError = Error(error);
     internalServiceError.status = 'internalServiceError';

@@ -1,0 +1,334 @@
+{{#if (not details.isSha256)}}
+  {{#each details.endpoints as |endpoint endpointIndex|}}
+    {{#if (gt endpointIndex 0)}}
+      <hr>
+    {{/if}}
+
+    <div>
+      <a href="https://central.sophos.com/manage/overview/computers-list">
+        Open Dashboard {{fa-icon "external-link" fixedWidth=true class="external-link-icon"}}
+      </a>
+    </div>
+
+    <h1 class="p-title">
+      {{fa-icon "info-circle" fixedWidth=true class="title-icon"}} {{endpoint.hostname}}
+    </h1>
+
+    {{#if endpoint.isIsolated}}
+      <div>
+        <span class="p-key">Isolated: </span>
+        <span class="p-value">True</span>
+      </div>
+    {{/if}}
+    {{#if endpoint.os}}
+      {{#if endpoint.os.name}}
+        <div>
+          <span class="p-key">OS Name: </span>
+          <span class="p-value">{{endpoint.os.name}}</span>
+        </div>
+      {{/if}}
+      {{#if endpoint.os.isServer}}
+        <div>
+          <span class="p-key">Is Server: </span>
+          <span class="p-value">{{endpoint.os.isServer}}</span>
+        </div>
+      {{/if}}
+    {{/if}}
+    {{#if endpoint.associatedPerson.name}}
+      <div>
+        <span class="p-key">Associated Person: </span>
+        <span class="p-value">{{endpoint.associatedPerson.name}}</span>
+      </div>
+    {{/if}}
+    {{#if endpoint.ipv4Addresses}}
+      <div>
+        <span class="p-key">IP Addresses: </span>
+        <span class="p-value">
+          {{join ', ' endpoint.ipv4Addresses}}
+        </span>
+      </div>
+    {{/if}}
+    {{#if endpoint.macAddresses}}
+      <div>
+        <span class="p-key">MAC Addresses: </span>
+        <span class="p-value">
+          {{join ', ' endpoint.macAddresses}}
+        </span>
+      </div>
+    {{/if}}
+
+    {{#if endpoint.lastSeenAt}}
+      <div>
+        <span class="p-key">Last Seen At: </span>
+        <span class="p-value">{{moment-format endpoint.lastSeenAt "MM/DD/YYYY HH:mm:ss" timeZone=timezone}}</span>
+      </div>
+    {{/if}}
+
+    {{#if endpoint.health}}
+      <h1 class="p-title">
+        {{fa-icon "plus-square" fixedWidth=true class="title-icon"}} Endpoint Health
+      </h1>
+      {{#if endpoint.health.overall}}
+        <div>
+          <span class="p-key">Overall Health: </span>
+          <span class="p-value">{{capitalize endpoint.health.overall}}</span>
+        </div>
+      {{/if}}
+      {{#if endpoint.health.threats.status}}
+        <div>
+          <span class="p-key">Threats Status: </span>
+          <span class="p-value">{{capitalize endpoint.health.threats.status}}</span>
+        </div>
+      {{/if}}
+      {{#if endpoint.health.services}}
+        {{#if endpoint.health.services.status}}
+          <div>
+            <span class="p-key">Services Status: </span>
+            <span class="p-value">{{capitalize endpoint.health.services.status}}</span>
+          </div>
+        {{/if}}
+        {{#if endpoint.health.services.serviceDetails.length}}
+          {{#if (get endpointServiceDetailsExpansionMap endpointIndex)}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleServiceDetails" endpointIndex)}}
+            >
+              <span class="text">Service Details</span> {{fa-icon "angle-up"}}
+            </a>
+            {{#each endpoint.health.services.serviceDetails as |serviceDetail|}}
+              <div>
+                <span class="p-key">{{serviceDetail.name}}: </span>
+                <span class="p-value">{{capitalize serviceDetail.status}}</span>
+              </div>
+            {{/each}}
+          {{else}}
+            <a
+              href="#"
+              class="expandable-title"
+              {{on "click" (action "toggleServiceDetails" endpointIndex)}}
+            >
+              <span class="text">Service Details</span> {{fa-icon "angle-down"}}
+            </a>
+          {{/if}}
+        {{/if}}
+      {{/if}}
+    {{/if}}
+
+    {{#if endpoint.assignedProducts.length}}
+      <h1 class="p-title">
+        {{fa-icon "project-diagram" fixedWidth=true class="title-icon"}} Assigned Products
+      </h1>
+      {{#each endpoint.assignedProducts as |assignedProduct|}}
+        <div>
+          <span class="p-key">{{capitalize assignedProduct.code}}({{assignedProduct.version}}): </span>
+          <span class="p-value">{{capitalize assignedProduct.status}}</span>
+        </div>
+      {{/each}}
+    {{/if}}
+
+    {{#if block.userOptions.allowBlockAllowIsolate}}
+      <h1 class="p-title submission-options py-1">
+        {{fa-icon "pause-circle" fixedWidth=true class="title-icon"}} Isolate Endpoint
+      </h1>
+      <div class="select-container">
+        <div class="p-value">Isolation Comment:</div>
+        <textarea
+          type="text"
+          class="comment"
+          placeholder="Reason to isolate"
+          onInput={{action "changeIsolationComment" endpointIndex}}
+          value={{endpoint.isolationComment}}
+          disabled={{isolateIsRunning}}
+        />
+      </div>
+
+      <div class="d-flex flex-row justify-content-between align-items-center mt-2">
+        <button {{action "isolateEndpoint" endpointIndex}}
+                disabled={{isolateIsRunning}}
+                class="p-btn btn btn-secondary m-0">
+          {{#if isolateIsRunning}}
+            {{fa-icon "spinner-third" fixedWidth=true spin=true}}
+          {{else}}
+            Isolate Endpoint
+          {{/if}}
+        </button>
+      </div>
+      {{#if message}}
+        <div class="isolate-message alert alert-info mt-1">
+          {{message}}
+        </div>
+      {{/if}}
+
+      {{#if errorMessage}}
+        <div class="isolate-message alert alert-danger mt-1">
+          {{errorMessage}}
+        </div>
+      {{/if}}
+    {{/if}}
+  {{/each}}
+{{else}}
+  {{#if details.foundSha256}}
+    <div>
+      <span class="p-key">In {{#if details.blocked}}Blocklist{{else}}AllowList{{/if}}: </span>
+      <span class="p-value">True</span>
+    </div>
+    <div>
+      <span class="p-key">Type: </span>
+      <span class="p-value">SHA256</span>
+    </div>
+
+    {{#if details.foundSha256.createdAt}}
+      <div>
+        <span class="p-key">Date Added: </span>
+        <span class="p-value">{{moment-format details.foundSha256.createdAt "MM/DD/YYYY HH:mm:ss" timeZone=timezone}}</span>
+      </div>
+    {{/if}}
+    {{#if details.foundSha256.comment}}
+      <div>
+        <span class="p-key">Comment: </span>
+        <span class="p-value">{{details.foundSha256.comment}}</span>
+      </div>
+    {{/if}}
+  {{else}}
+    {{#if (not block.userOptions.allowBlockAllowIsolate)}}
+      <div class="note">
+        <span class="p-key">
+          <b><em>NOTE: </em></b>This hash is neither in the Allowlist or Blocklist
+        </span>
+      </div>
+    {{/if}}
+  {{/if}}
+
+  {{#if block.userOptions.allowBlockAllowIsolate}}
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a {{action "changeTab" "addToBlocklist"}} class="nav-link {{if (or (eq activeTab "addToBlocklist")(not activeTab)) "active"}}" href="#">
+          Add To Blocklist
+        </a>
+      </li>
+      <li class="nav-item">
+        <a {{action "changeTab" "addToAllow"}} class="nav-link {{if (eq activeTab "addToAllow") "active"}}" href="#">
+          Add To Allowlist
+        </a>
+      </li>
+    </ul>
+
+
+    {{#if (eq activeTab "addToBlocklist")}}
+      <div>
+        <a href="https://central.sophos.com/manage/config/settings/endpoint-blocklist">
+          View Blocked Items {{fa-icon "external-link" fixedWidth=true class="external-link-icon"}}
+        </a>
+      </div>
+
+      {{#if details.allowed}}
+        <div class="note">
+          <span class="p-key">
+            <b><em>NOTE: </em></b>This hash is already found in the Allowlist.
+            Blocking this hash will remove it from the Allowlist, and add it to the Blocklist.
+          </span>
+        </div>
+      {{/if}}
+      {{#if details.blocked}}
+        <div class="note">
+          <span class="p-key"><b><em>NOTE: </em></b>This hash is already in the blocklist.</span>
+        </div>
+      {{/if}}
+
+      <div class="select-container">
+        <div class="p-value">Blocking Comment: &nbsp;</div>
+        <textarea
+          type="text"
+          class="comment"
+          placeholder="Why Block this Hash?"
+          onInput={{action (mut blockingComment) value="target.value"}}
+          value={{blockingComment}}
+          disabled={{details.blocked}}
+        />
+      </div>
+
+      <div class="d-flex flex-row justify-content-between align-items-center mt-2">
+        <button {{action "addToBlockOrAllowList" true}}
+                disabled={{details.blocked}}
+                class="p-btn btn btn-secondary m-0">
+          {{#if isBlockingOrAllowing}}
+            {{fa-icon "spinner-third" fixedWidth=true spin=true}}
+          {{else}}
+            Block
+          {{/if}}
+        </button>
+
+        {{#if message}}
+          <div class="isolate-message alert alert-info m-0">
+            {{message}}
+          </div>
+        {{/if}}
+
+        {{#if errorMessage}}
+          <div class="isolate-message alert alert-danger m-0">
+            {{errorMessage}}
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+
+
+    {{#if (eq activeTab "addToAllow")}}
+      <div>
+        <a href="https://central.sophos.com/manage/config/settings/endpoint-blocklist">
+          View Allowed Applications {{fa-icon "external-link" fixedWidth=true class="external-link-icon"}}
+        </a>
+      </div>
+      {{#if details.blocked}}
+        <div class="note">
+          <span class="p-key">
+            <b><em>NOTE: </em></b>This hash is already found in the Blocklist.
+            Allowing this hash will remove it from the Blocklist, and add it to the Allowlist.
+          </span>
+        </div>
+      {{/if}}
+      {{#if details.allowed}}
+        <div class="note">
+          <span class="p-key"><b><em>NOTE: </em></b>This hash is already in the AllowList.</span>
+        </div>
+      {{/if}}
+
+      <div class="select-container">
+        <div class="p-value">Allowing Comment: &nbsp;</div>
+        <textarea
+          type="text"
+          class="comment"
+          placeholder="Why Allow this Hash?"
+          onInput={{action (mut allowingComment) value="target.value"}}
+          value={{allowingComment}}
+          disabled={{details.allowed}}
+        />
+      </div>
+
+      <div class="d-flex flex-row justify-content-between align-items-center mt-2">
+        <button {{action "addToBlockOrAllowList" false}}
+                disabled={{details.allowed}}
+                class="p-btn btn btn-secondary m-0">
+          {{#if isBlockingOrAllowing}}
+            {{fa-icon "spinner-third" fixedWidth=true spin=true}}
+          {{else}}
+            Allow
+          {{/if}}
+        </button>
+
+        {{#if message}}
+          <div class="isolate-message alert alert-info m-0">
+            {{message}}
+          </div>
+        {{/if}}
+
+        {{#if errorMessage}}
+          <div class="isolate-message alert alert-danger m-0">
+            {{errorMessage}}
+          </div>
+        {{/if}}
+      </div>
+    {{/if}}
+  {{/if}}
+{{/if}}
