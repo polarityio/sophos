@@ -2,7 +2,7 @@ module.exports = {
   name: 'Sophos',
   acronym: 'SO',
   description:
-    'The Polarity Sophos integration allows Polarity to search Sophos to return found domains, urls, IPs, and SHA256 hashes.  The integration also allows you to Isolated found endpoints, and add SHA256 hashes to your Block and Allow Lists.',
+    'The Polarity Sophos integration allows Polarity to search Sophos to return found domains, urls, IPs, and SHA256 hashes.  The integration also allows you to isolate found endpoints, and add SHA256 hashes to your Block and Allow Lists.',
   entityTypes: ['domain', 'url', 'IPv4', 'IPv6', 'SHA256'],
   customTypes: [
     {
@@ -39,8 +39,8 @@ module.exports = {
       description: 'The Data Region Url for your Tenant ID.',
       default: '',
       type: 'text',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'tenantId',
@@ -48,8 +48,8 @@ module.exports = {
       description: 'The Tenant ID you wish to use in searching.',
       default: '',
       type: 'text',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'clientId',
@@ -58,17 +58,17 @@ module.exports = {
         'The Client ID for your Sophos Credentials.  (accessible at https://central.sophos.com/manage/config/settings/credentials)',
       default: '',
       type: 'text',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'clientSecret',
       name: 'Client Secret',
-      description: 'The Client Secret For your Sopho Credentials.',
+      description: 'The Client Secret For your Sophos Credentials.',
       default: '',
       type: 'password',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'allowBlockAllowIsolate',
@@ -77,8 +77,8 @@ module.exports = {
         'This allows you to add SHA256 hashes to Allow and Block lists, and Isolate found endpoints.',
       default: true,
       type: 'boolean',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'checkIsolationStatus',
@@ -86,10 +86,10 @@ module.exports = {
       description:
         'If unchecked we will not check to see if an Endpoint is already Isolated unless you attempt to Isolate an Endpoint. ' +
         'This reduces the amount of API calls and lessens your chances of hitting your API Limit.',
-      default: true,
+      default: false,
       type: 'boolean',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'checkBlockAllowLists',
@@ -97,10 +97,10 @@ module.exports = {
       description:
         'If unchecked we will not check to see if a SHA256 hash is already in an Allow/Block list. ' +
         'This reduces the amount of API calls and lessens your chances of hitting your API Limit.',
-      default: true,
+      default: false,
       type: 'boolean',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     },
     {
       key: 'allowBlockListCacheTime',
@@ -112,8 +112,8 @@ module.exports = {
         '(Unit is in Minutes)',
       default: 5,
       type: 'number',
-      userCanEdit: true,
-      adminOnly: false
+      userCanEdit: false,
+      adminOnly: true
     }
   ]
 };
