@@ -4,12 +4,15 @@ module.exports = {
   description:
     'The Polarity Sophos integration allows Polarity to search Sophos to return found domains, urls, IPs, and SHA256 hashes.  The integration also allows you to isolate found endpoints, and add SHA256 hashes to your Block and Allow Lists.',
   entityTypes: ['domain', 'url', 'IPv4', 'IPv6', 'SHA256'],
+  /*
   customTypes: [
     {
       key: 'hostname',
+      // Replace this regex with a regex for your own hostnames
       regex: /\w{3,}\-\w{3,}/
     }
   ],
+  */
   styles: ['./styles/styles.less'],
   defaultColor: 'light-pink',
   onDemandOnly: true,
