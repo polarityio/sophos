@@ -1,6 +1,9 @@
 polarity.export = PolarityComponent.extend({
   details: Ember.computed.alias('block.data.details'),
   summary: Ember.computed.alias('block.data.summary'),
+  timezone: Ember.computed("Intl", function () {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }),
   activeTab: 'addToBlocklist',
   allowingComment: '',
   blockingComment: '',
