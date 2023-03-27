@@ -1,4 +1,5 @@
 {
+  "polarityIntegrationUuid": "efac5570-cce1-11ed-aeee-075d3490155d",
   "name": "Sophos",
   "acronym": "SO",
   "description": "The Polarity Sophos integration allows Polarity to search Sophos to return found domains, urls, IPs, and SHA256 hashes.  The integration also allows you to isolate found endpoints, and add SHA256 hashes to your Block and Allow Lists.",
