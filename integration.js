@@ -43,10 +43,13 @@ const doLookup = async (entities, options, cb) => {
 const onDetails = async (lookupObject, options, callback) => {
   Logger.debug({ lookupObject }, 'Lookup Object in onDetails');
 
-  const isSHA256Hash = fp.flow(
-    fp.get('entity.subtype'),
-    fp.equals('SHA256')
-  )(lookupObject);
+  const isSHA256Hash =
+    lookupObject.entity.type === 'hash' &&
+    fp.find(
+      (entityType) => ['MD5', 'SHA1', 'SHA256'].includes(entityType),
+      lookupObject.entity.types
+    ) === 'SHA256';
+
   if (isSHA256Hash && options.checkBlockAllowLists) {
     try {
       lookupObject.data = await checkAllowAndBlockListsForEntity(
@@ -70,12 +73,12 @@ const onDetails = async (lookupObject, options, callback) => {
         requestWithDefaults,
         Logger
       );
-      
+
       const anyEndpointsAreIsolated = fp.flow(
         fp.get('data.details.endpoints'),
         fp.some(fp.get('isIsolated'))
       )(lookupObject);
-        
+
       if (anyEndpointsAreIsolated) {
         lookupObject.data.summary = [
           ...fp.get('data.summary', lookupObject),
