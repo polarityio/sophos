@@ -43,12 +43,7 @@ const doLookup = async (entities, options, cb) => {
 const onDetails = async (lookupObject, options, callback) => {
   Logger.debug({ lookupObject }, 'Lookup Object in onDetails');
 
-  const isSHA256Hash =
-    lookupObject.entity.type === 'hash' &&
-    fp.find(
-      (entityType) => ['MD5', 'SHA1', 'SHA256'].includes(entityType),
-      lookupObject.entity.types
-    ) === 'SHA256';
+  const isSHA256Hash = lookupObject.entity.isSHA256;
 
   if (isSHA256Hash && options.checkBlockAllowLists) {
     try {
