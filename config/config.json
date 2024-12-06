@@ -10,6 +10,7 @@
     "IPv6",
     "SHA256",
     {
+      "type": "custom",
       "name": "Hostname",
       "description": "Hostname Regex",
       "editable": true,
