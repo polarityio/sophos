@@ -3,16 +3,24 @@
   "name": "Sophos",
   "acronym": "SO",
   "description": "The Polarity Sophos integration allows Polarity to search Sophos to return found domains, urls, IPs, and SHA256 hashes.  The integration also allows you to isolate found endpoints, and add SHA256 hashes to your Block and Allow Lists.",
-  "entityTypes": [
+  "dataTypes": [
     "domain",
     "url",
     "IPv4",
     "IPv6",
-    "SHA256"
+    "SHA256",
+    {
+      "type": "custom",
+      "name": "Hostname",
+      "description": "Matches on possible Hostnames lookups which can be a single search term between 5 and 25 characters using A-Z, 0-9 and dashes.",
+      "editable": true,
+      "enabled": false,
+      "key": "hostname",
+      "regex": "^(?<!\\n|\\r\\n)[ \\t]*[a-zA-Z0-9\\-]{5,25}[ \\t]*(?!\\n|\\r\\n)$"
+    }
   ],
-  "styles": [
-    "./styles/styles.less"
-  ],
+  "entityTypes": ["domain", "url", "IPv4", "IPv6", "SHA256"],
+  "styles": ["./styles/styles.less"],
   "defaultColor": "light-pink",
   "onDemandOnly": true,
   "block": {
@@ -22,13 +30,6 @@
     "template": {
       "file": "./templates/block.hbs"
     }
-  },
-  "request": {
-    "cert": "",
-    "key": "",
-    "passphrase": "",
-    "ca": "",
-    "proxy": ""
   },
   "logging": {
     "level": "info"
