@@ -12,11 +12,11 @@
     {
       "type": "custom",
       "name": "Hostname",
-      "description": "Hostname Regex",
+      "description": "Matches on possible Hostnames lookups which can be a single search term between 5 and 25 characters using A-Z, 0-9 and dashes.",
       "editable": true,
       "enabled": false,
       "key": "hostname",
-      "regex": "/\\w{3,}\\-\\w{3,}/"
+      "regex": "^(?<!\\n|\\r\\n)[ \\t]*[a-zA-Z0-9\\-]{5,25}[ \\t]*(?!\\n|\\r\\n)$"
     }
   ],
   "entityTypes": ["domain", "url", "IPv4", "IPv6", "SHA256"],
